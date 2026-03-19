@@ -1414,7 +1414,7 @@ fi
 # FFmpeg version to build if one isn't specified for us.
 if [ -z "${FFMPEG_VERSION}" ]; then
 
-  FFMPEG_VERSION="8.0"
+  FFMPEG_VERSION="8.1"
 fi
 
 if [ -z "${EXTRA_VERSION:-}" ]; then
