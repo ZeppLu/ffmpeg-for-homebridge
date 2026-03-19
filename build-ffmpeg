@@ -766,7 +766,7 @@ if command_exists "python3"; then
   fi
 fi
 
-if build "svtav1" "3.0.2"; then
+if build "svtav1" "4.0.1"; then
 
   # Last known working commit which passed CI Tests from HEAD branch
   download "https://gitlab.com/AOMediaCodec/SVT-AV1/-/archive/v${CURRENT_PACKAGE_VERSION}/SVT-AV1-v${CURRENT_PACKAGE_VERSION}.tar.gz" "svtav1-${CURRENT_PACKAGE_VERSION}.tar.gz"
@@ -1419,7 +1419,7 @@ fi
 # FFmpeg version to build if one isn't specified for us.
 if [ -z "${FFMPEG_VERSION}" ]; then
 
-  FFMPEG_VERSION="8.0"
+  FFMPEG_VERSION="8.1"
 fi
 
 if [ -z "${EXTRA_VERSION:-}" ]; then

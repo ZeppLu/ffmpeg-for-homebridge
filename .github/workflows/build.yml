@@ -39,7 +39,7 @@ on:
 env:
 
   # Which version of FFmpeg we want to build. The downstream scripts all inherit from this value.
-  FFMPEG_VERSION: "8.0"
+  FFMPEG_VERSION: "8.1"
 
 jobs:
 
