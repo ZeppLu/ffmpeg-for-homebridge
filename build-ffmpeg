@@ -834,6 +834,7 @@ if ${NONFREE_AND_GPL} && [[ ! "${TARGET_ARCH}" == "armv7l" ]] ; then
     # Patch x265 source for CMake 4.x compatibility: remove cmake_policy calls
     # that set CMP0025 and CMP0054 to OLD, which CMake 4.x no longer supports.
     sed -i.backup '/cmake_policy(SET CMP0025 OLD)/d; /cmake_policy(SET CMP0054 OLD)/d' source/CMakeLists.txt
+    rm -f source/CMakeLists.txt.backup
 
     cd build/linux || exit
     rm -rf 8bit 10bit 12bit 2>/dev/null
