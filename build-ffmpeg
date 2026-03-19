@@ -766,7 +766,7 @@ if command_exists "python3"; then
   fi
 fi
 
-if build "svtav1" "4.0.1"; then
+if build "svtav1" "3.0.2"; then
 
   # Last known working commit which passed CI Tests from HEAD branch
   download "https://gitlab.com/AOMediaCodec/SVT-AV1/-/archive/v${CURRENT_PACKAGE_VERSION}/SVT-AV1-v${CURRENT_PACKAGE_VERSION}.tar.gz" "svtav1-${CURRENT_PACKAGE_VERSION}.tar.gz"
@@ -831,22 +831,26 @@ if ${NONFREE_AND_GPL} && [[ ! "${TARGET_ARCH}" == "armv7l" ]] ; then
 
     download "https://bitbucket.org/multicoreware/x265_git/downloads/x265_${CURRENT_PACKAGE_VERSION}.tar.gz" "x265-${CURRENT_PACKAGE_VERSION}.tar.gz" # This is actually 3.4 if looking at x265Version.txt
 
+    # Patch x265 source for CMake 4.x compatibility: remove cmake_policy calls
+    # that set CMP0025 and CMP0054 to OLD, which CMake 4.x no longer supports.
+    sed -i.backup '/cmake_policy(SET CMP0025 OLD)/d; /cmake_policy(SET CMP0054 OLD)/d' source/CMakeLists.txt
+
     cd build/linux || exit
     rm -rf 8bit 10bit 12bit 2>/dev/null
     mkdir -p 8bit 10bit 12bit
 
     cd 12bit || exit
-    execute cmake ../../../source -DCMAKE_INSTALL_PREFIX="${WORKSPACE}" -DENABLE_SHARED=OFF -DBUILD_SHARED_LIBS=OFF -DHIGH_BIT_DEPTH=ON -DENABLE_HDR10_PLUS=ON -DEXPORT_C_API=OFF -DENABLE_CLI=OFF -DMAIN12=ON -DCMAKE_POLICY_VERSION_MINIMUM=3.5
+    execute cmake ../../../source -DCMAKE_INSTALL_PREFIX="${WORKSPACE}" -DENABLE_SHARED=OFF -DBUILD_SHARED_LIBS=OFF -DHIGH_BIT_DEPTH=ON -DENABLE_HDR10_PLUS=ON -DEXPORT_C_API=OFF -DENABLE_CLI=OFF -DMAIN12=ON
     execute make -j ${MJOBS}
 
     cd ../10bit || exit
-    execute cmake ../../../source -DCMAKE_INSTALL_PREFIX="${WORKSPACE}" -DENABLE_SHARED=OFF -DBUILD_SHARED_LIBS=OFF -DHIGH_BIT_DEPTH=ON -DENABLE_HDR10_PLUS=ON -DEXPORT_C_API=OFF -DENABLE_CLI=OFF -DCMAKE_POLICY_VERSION_MINIMUM=3.5
+    execute cmake ../../../source -DCMAKE_INSTALL_PREFIX="${WORKSPACE}" -DENABLE_SHARED=OFF -DBUILD_SHARED_LIBS=OFF -DHIGH_BIT_DEPTH=ON -DENABLE_HDR10_PLUS=ON -DEXPORT_C_API=OFF -DENABLE_CLI=OFF
     execute make -j ${MJOBS}
 
     cd ../8bit || exit
     ln -sf ../10bit/libx265.a libx265_main10.a
     ln -sf ../12bit/libx265.a libx265_main12.a
-    execute cmake ../../../source -DCMAKE_INSTALL_PREFIX="${WORKSPACE}" -DENABLE_SHARED=OFF -DBUILD_SHARED_LIBS=OFF -DEXTRA_LIB="x265_main10.a;x265_main12.a;-ldl" -DEXTRA_LINK_FLAGS=-L. -DLINKED_10BIT=ON -DLINKED_12BIT=ON -DCMAKE_POLICY_VERSION_MINIMUM=3.5
+    execute cmake ../../../source -DCMAKE_INSTALL_PREFIX="${WORKSPACE}" -DENABLE_SHARED=OFF -DBUILD_SHARED_LIBS=OFF -DEXTRA_LIB="x265_main10.a;x265_main12.a;-ldl" -DEXTRA_LINK_FLAGS=-L. -DLINKED_10BIT=ON -DLINKED_12BIT=ON
     execute make -j ${MJOBS}
 
     mv libx265.a libx265_main.a
